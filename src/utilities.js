@@ -1,10 +1,31 @@
 /* compare two ingredients, for sorting */
 function compareIngredientsCB(ingredientA, ingredientB){
+
+    if (ingredientA.aisle < ingredientB.aisle) {
+        return -1;
+      }
+      if (ingredientA.aisle > ingredientB.aisle) {
+        return 1;
+      }
+    
+      if (ingredientA.name < ingredientB.name) {
+        return -1;
+      }
+      if (ingredientA.name > ingredientB.name) {
+        return 1;
+      }
+    
+    }
+
+
+
+
+
     // each ingredient object has aisle and name properties.
     // TODO: compare ingredients by supermarket aisle. If the aisles are the same, compare them by name
     // see Array.sort() documentation
     // TODO find the export line below and export this function!
-}
+
 
 
 /* 
@@ -12,7 +33,13 @@ function compareIngredientsCB(ingredientA, ingredientB){
   Note that sort() will change the original array. To avoid that, use [...ingredients] which creates a new array and spreads the elements of the `ingredients` array.
 */
 function sortIngredients(ingredients){
-    return // TODO
+    
+    const sortedIngredients = [...ingredients];
+    
+    sortedIngredients.sort(compareIngredientsCB);
+    
+    
+    return sortedIngredients;
 }
 
 // helper object for isKnownType and dish sorting
@@ -24,25 +51,55 @@ const dishTypeRanking={
 };
 
 function isKnownTypeCB(type){
+        if (type in dishTypeRanking) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+    
+    
     // TODO look up type in dishTypeRanking. In case it is found, return true (or truthy, i.e. anything not falsy, see below).
     // otherwise return falsy (false, 0, undefined, or "")
     // Remember the object[key] syntax! It returns undefined if the key is not present in the object.
     // Optional: using truthy / falsy you can write this without if() ! 
-}
+
 
 /* dish.dishTypes will contain an array of dish types, of which we have to pick one that is known.
   Pass isKnownTypeCB as a callback to `Array.find()` to determine the dish known type. 
   If a known type cannot be determined, return "" 
 */
-function dishType(dish){
-    // TODO
-}
+function dishType(dish) {
+    if (dish.dishTypes) {
+      const knownType = dish.dishTypes.find(isKnownTypeCB);
+      return knownType || "";
+    }
+    return "";
+  }
+
 
 /* 
    Write a sort() comparator callback that compares dishes by their type, 
    so that all starters come before main courses and main courses come before desserts 
 */
 function __give_a_proper_name_CB(dishA, dishB){
+    
+    let convertA = dishTypeRanking[dishType(dishA)];
+    let convertB = dishTypeRanking[dishType(dishB)];
+  
+    if (convertA === undefined) {
+      convertA = dishTypeRanking[""];
+    }
+    if (convertB === undefined) {
+      convertB = dishTypeRanking[""];
+    }
+  
+    let int = convertA - convertB;
+  
+    return int;
+
+    
+    
     // use dishType(dishA) and dishType(dishB)
     // use dishTypeRanking to convert these types to integers
     // once you know the integers, simply compare them
@@ -54,7 +111,8 @@ function __give_a_proper_name_CB(dishA, dishB){
    Sort the dishes using the comparator callback above.
 */
 function sortDishes(dishes){
-    return //TODO
+    const copyOfDishes = dishes.slice(); // Create a copy
+    return copyOfDishes.sort(__give_a_proper_name_CB);
 }
 
 /* 
@@ -93,9 +151,9 @@ function shoppingList(dishes){
         }
     }
 
-    const arrayOfIngredientArrays= dishes.map(/*TODO pass the callback that transforms a dish to its ingredients */);
+    const arrayOfIngredientArrays= dishes.map(keepJustIngredientsCB)/*TODO pass the callback that transforms a dish to its ingredients */;
     const allIngredients= arrayOfIngredientArrays.flat();    
-    allIngredients.forEach(/* TODO: pass the callback that treats an ingredient */);
+    allIngredients.forEach(ingredientCB/* TODO: pass the callback that treats an ingredient */);
 
     // Note: the 3 lines above can be written as a function chain:
     // dishes.map(callback1).flat().forEach(callback2);
@@ -107,6 +165,21 @@ function shoppingList(dishes){
 
 /* Given a dish array, calculate their total price with a map-reduce callback exercise */
 function menuPrice(dishesArray){
+    
+    function getDishPrice(dish){
+      return dish.pricePerServing;
+    }
+
+    function sumOfTwoDishes(dishA, dishB){
+
+        return dishA+dishB;
+    }
+
+    const pricesArray = dishesArray.map(getDishPrice);
+    const totalPrice = pricesArray.reduce(sumOfTwoDishes, 0);
+    return totalPrice;
+    
+    
     // TODO callback1: given a dish, return its price. Look in /test/dishesConst.js to find out the name of the dish price property. 
     // TODO callback2, with two parameters. Return the sum of the parameters
     // TODO set proper names to the callbacks!
@@ -122,7 +195,7 @@ function menuPrice(dishesArray){
 */
 
 
-//export {compareIngredientsCB, sortIngredients /*TODO add more here! */};
+export {compareIngredientsCB, sortIngredients , isKnownTypeCB, dishType,  __give_a_proper_name_CB, sortDishes, shoppingList, menuPrice   /*TODO add more here! */};
 
 /*
   Optional: once you are done with the whole TW1, 
@@ -142,4 +215,9 @@ function menuPrice(dishesArray){
   And you can even move both callback definitions outside shoppingList() . Creating functions inside functions is more expensive 
   because the new function object is re-created and interpreted every time the enclosing function runs.
 */
+
+
+
+
+
 

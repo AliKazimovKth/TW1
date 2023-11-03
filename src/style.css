@@ -2,3 +2,10 @@
 .debug {
     border-style:solid;
 }
+.totalQuantity{
+    text-align: right;
+
+}
+.totalPrice{
+    text-align: right;
+}

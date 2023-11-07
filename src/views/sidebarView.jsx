@@ -1,74 +1,64 @@
 
 
-import { sortDishes, menuPrice, dishType } from "../utilities.js";
 import "/src/style.css"
+import { sortDishes, menuPrice, dishType } from "../utilities.js";
+
+
 
 function SidebarView(props) {
-    // Function to increment the number of dishes
-    function incrementingButtonACB() {
+    function increaseCountCB() {
         props.onNumberChange(props.number + 1);
     }
 
-    // Function to decrement the number of dishes
-    function decrementingButtonACB() {
+    function decreaseCountCB() {
         props.onNumberChange(props.number - 1);
     }
 
+    function removeFromMenuCB(dish) {
+        props.removeFromMenu(dish);
+    }
 
-    // Returning the SidebarView component
+    function onDishClickCB(dish) {
+        props.dishName(dish);
+    }
+
+    function renderDishRow(dish, persons) {
+        return (
+            <tr className="SidebarRow" key={dish.id}>
+                <td><button onClick={() => removeFromMenuCB(dish)}>x</button></td>
+                <td><a onClick={() => onDishClickCB(dish)} href="#details">{dish.title}</a></td>
+                <td className="DishType">{dishType(dish)}</td>
+                <td className="totalPrice">{(dish.pricePerServing * persons).toFixed(2)}</td>
+            </tr>
+        );
+    }
+
     return (
         <div>
-            {/* Button to decrement the number of dishes */}
-            <button onClick={decrementingButtonACB} disabled={props.number === 1}>-</button>
-            {/* Display the number of dishes */}
+            <button onClick={decreaseCountCB} disabled={props.number === 1}>-</button>
             {props.number}
-            {/* Button to increment the number of dishes */}
-            <button onClick={incrementingButtonACB}>+</button>
-            {/* Rendering the list of dishes */}
-            {renderDishes(props.dishes, props.number)}
-        </div>
-    );
-
-    // Function to render the list of dishes
-    function renderDishes(dishArray, people) {
-        // Callback function to construct rows for each dish
-        function TableDishRowCB(dish) {
-            return (
-                <tr className="sidebarRow" key={dish.id}>
-                    <td><button onClick={() => userRemoveDishACB(dish)}>x</button></td>
-                    <td><a onClick={() => dishNameIsPressedACB(dish)} href="#details">{dish.title}</a></td>
-                    <td className="dishType">{dishType(dish)}</td>
-                    <td className="totalPrice">{(dish.pricePerServing * people).toFixed(2)}</td>
-                </tr>
-            );
-        }
-
-        // Callback function to remove a dish
-        function userRemoveDishACB(dish) {
-            props.removeDish(dish);
-        }
-
-        // Callback function when dish name is clicked
-        function dishNameIsPressedACB(dish) {
-            props.dishName(dish);
-        }
-
-        // Rendering the table with dishes and total
-        return (
+            <button onClick={increaseCountCB}>+</button>
             <table>
                 <tbody>
-                    {/* Mapping each dish to a TableDishRowCB */}
-                    {sortDishes(dishArray).map((dish) => TableDishRowCB(dish))}
+                    {sortDishes(props.dishes).map((dish) => renderDishRow(dish, props.number))}
                     <tr>
                         <td></td>
                         <td>Total:</td>
                         <td></td>
-                        <td className="totalPrice">{(menuPrice(dishArray) * people).toFixed(2)}</td>
+                        <td className="totalPrice">{(menuPrice(props.dishes) * props.number).toFixed(2)}</td>
                     </tr>
                 </tbody>
             </table>
-        );
-    }
+        </div>
+    );
 }
 
 export default SidebarView;
+
+
+
+
+
+
+
+
